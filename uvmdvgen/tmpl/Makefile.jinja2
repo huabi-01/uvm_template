@@ -1,0 +1,42 @@
+### User variables
+SEED = 1
+TB = tb
+
+all: com sim verdi
+
+com:
+	vcs \
+	-full64 \
+	-f filelist \
+	<% if uvm %>
+	+incdir+/home/synopsys/vcs/O-2018.09-SP2/etc/uvm-1.2 \
+	uvm-1.2 \
+	<% endif %>
+	-sverilog \
+	-debug_acc+all \
+	-timescale=1ns/1ns \
+	-P  /home/synopsys/verdi/Verdi_O-2018.09-SP2/share/PLI/VCS/linux64/novas.tab \
+		  /home/synopsys/verdi/Verdi_O-2018.09-SP2/share/PLI/VCS/linux64/pli.a \
+	-l compile.log
+
+verdi:
+	verdi \
+	+v2k \
+	-sverilog \
+	-f filelist \
+	-ssf test.fsdb &
+
+sim:
+	./simv \
+  -ucli -i dump_fsdb_vcs.tcl \
+	+ntb_random_seed=${SEED} \
+	-l sim.log
+
+clean:
+	rm -rf *.log csrc simv* *.key *.vpd DVEfiles coverage *.vdb tags nWaveLog sharedMem.dat novas.rc novas.conf INCA_libs verdiLog vfastLog BSSLib.lib++
+
+
+
+
+
+

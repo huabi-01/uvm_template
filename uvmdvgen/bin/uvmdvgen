@@ -1,0 +1,12 @@
+#!/bin/csh -f 
+set tool = "uvmdvgen.py"
+
+#if (! $?UVMDVGEN_PATH) then 
+#  echo "Error: Can not find env 'UVMDVGEN_PATH' setting"
+#  exit 1
+#endif
+
+#set tool_exec = ${UVMDVGEN_PATH}/modules/$tool
+set tool_exec = /home/ICer/software/exe/uvmdvgen//modules/uvmdvgen.py
+
+python3 ${tool_exec} $*:q

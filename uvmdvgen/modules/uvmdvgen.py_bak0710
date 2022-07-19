@@ -1,0 +1,57 @@
+import sys
+import os
+import argparse
+import logging as log
+import shutil
+from helper import try_mkdir,gen_template_text,run_in,read_yaml
+from helper import write_file,run_one_line_cmd
+
+
+def arg_parse():
+    arg_parser = argparse.ArgumentParser()
+
+    arg_parser.add_argument(
+            "-conf",
+            required = True,
+            help="Specify config"
+            )
+    
+    arg_parser.add_argument(
+            "-gen_uvm_tb",
+            help="Generate uvm testbench"
+            )
+    
+    arg_parser.add_argument(
+            "-gen_tb",
+            help="Generate testbench for simulation"
+            )
+        
+    arg_parser.add_argument(
+            "-gen_sim_script",
+            help="Generate simulation script"
+            )
+
+    args = arg_parser.parse_args()
+    return args
+
+def main():
+    args = arg_parse() 
+
+    conf = args.conf
+    
+    ### convert yaml to dict
+    conf_dict = read_yaml(conf)
+    
+    gen_template_text(
+            "{}_pkg.sv".format(conf_dict["pkg_conf"]["pkg_name"]),
+            "pkg.sv",
+            dict( name = conf_dict["pkg_conf"]["component_name"],
+                  pkg_name =  conf_dict["pkg_conf"]["pkg_name"] 
+                 ),
+            template_root_dir="/home/ICer/software/exe/dvsim/tmpl",
+            x = False
+            )
+        
+if __name__ == "__main__":
+    main()
+

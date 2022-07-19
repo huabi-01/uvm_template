@@ -1,0 +1,58 @@
+module tb;
+
+logic clk,rstn;
+
+
+<% for pkt in pkt_list %>
+import <$ pkt $>::*;
+<% endif %>
+
+<$ interface_name $> vif(.*);
+
+
+router_generator gen;
+router_driver drv;
+
+router dut(
+    .reset_n	(vif.rstn),
+    .clock		(vif.clk),
+    .din		  (vif.din),
+    .frame_n	(vif.frame_n),
+    .valid_n	(vif.valid_n),
+    .dout		  (vif.dout),
+    .valido_n	(vif.valido_n),
+    .busy_n		(vif.busy_n),
+    .frameo_n	(vif.frameo_n)
+);
+
+initial begin
+    clk <= 0;
+    forever begin
+        #5 clk <= ~clk;
+    end
+end
+
+initial begin
+    rstn <= 0;
+    #11;
+    rstn <= 1;
+end
+
+
+initial begin
+    gen = new("Generator");
+    gen.ntrans = 100;
+    drv = new("Driver");
+    drv.set_interface(vif);
+    drv.req_mb = gen.req_mb;
+    drv.rsp_mb = gen.rsp_mb;
+    fork 
+        drv.run();
+        gen.run();
+    join_any  
+//#500;
+    $finish(); 
+end
+
+endmodule
+
